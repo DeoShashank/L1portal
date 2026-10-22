@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L1 Portal | Department Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            850: '#0B192C',
+                            900: '#07101B',
+                        },
+                        electric: {
+                            500: '#0066FF',
+                            600: '#0052CC',
+                        },
+                        surface: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for sleek dashboard appearance */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 102, 255, 0.1), 0 8px 10px -6px rgba(0, 102, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="h-full bg-surface text-slate-800 font-sans antialiased overflow-hidden flex flex-col">
+
+    <script>
+        // Initial dataset of 22 realistic enterprise/department URLs
+        const initialLinks = [
+            { id: 1, title: 'IAM Security Console', category: 'Administration', url: 'https://iam.internal.corp/auth', desc: 'Identity & Access Management, role policies, and SSO tokens.', icon: 'fa-shield-halved', status: 'operational', pinned: true, clicks: 142 },
+            { id: 2, title: 'User Directory & HR', category: 'Administration', url: 'https://hr.internal.corp/directory', desc: 'Employee master records, department hierarchy, and onboarding status.', icon: 'fa-users-gear', status: 'operational', pinned: false, clicks: 89 },
+            { id: 3, title: 'Enterprise LDAP Hub', category: 'Administration', url: 'https://ldap.internal.corp/admin', desc: 'Directory services, security groups, and domain authentication control.', icon: 'fa-server', status: 'operational', pinned: false, clicks: 45 },
+            { id: 4, title: 'Cloud Billing & Invoicing', category: 'Administration', url: 'https://billing.internal.corp/dashboard', desc: 'AWS/Azure cloud expenditure tracking, departmental budget allocations.', icon: 'fa-file-invoice-dollar', status: 'operational', pinned: true, clicks: 210 },
+            { id: 5, title: 'Server Health Matrix', category: 'Monitoring', url: 'https://monitor.internal.corp/matrix', desc: 'Real-time CPU, RAM, and storage telemetry across 450+ nodes.', icon: 'fa-heart-pulse', status: 'operational', pinned: true, clicks: 350 },
+            { id: 6, title: 'Network Traffic Analyzer', category: 'Monitoring', url: 'https://netflow.internal.corp/live', desc: 'Bandwidth consumption, packet loss metrics, and perimeter firewall logs.', icon: 'fa-network-wired', status: 'operational', pinned: false, clicks: 120 },
+            { id: 7, title: 'Error Log Aggregator (ELK)', category: 'Monitoring', url: 'https://logs.internal.corp/app', desc: 'Centralized stack traces, runtime exceptions, and microservice audit logs.', icon: 'fa-bug', status: 'warning', pinned: false, clicks: 285 },
+            { id: 8, title: 'Uptime Status Page', category: 'Monitoring', url: 'https://status.internal.corp/public', desc: 'SLA guarantees, historical availability charts, and incident dispatch.', icon: 'fa-gauge-high', status: 'operational', pinned: false, clicks: 95 },
+            { id: 9, title: 'BI & Executive Dashboard', category: 'Analytics', url: 'https://bi.internal.corp/reports', desc: 'Quarterly KPIs, revenue forecasting models, and conversion funnel metrics.', icon: 'fa-chart-pie', status: 'operational', pinned: true, clicks: 180 },
+            { id: 10, title: 'Database Query Studio', category: 'Analytics', url: 'https://sql.internal.corp/studio', desc: 'Read-only analytics warehouse data lake exploration and OLAP cubes.', icon: 'fa-database', status: 'operational', pinned: false, clicks: 160 },
+            { id: 11, title: 'Product Telemetry Suite', category: 'Analytics', url: 'https://telemetry.internal.corp/metrics', desc: 'User engagement funnels, session duration heatmaps, and retention cohorts.', icon: 'fa-chart-line', status: 'operational', pinned: false, clicks: 78 },
+            { id: 12, title: 'IT Helpdesk & Ticketing', category: 'Support', url: 'https://helpdesk.internal.corp/tickets', desc: 'Internal IT support queue, hardware requests, and priority escalation boards.', icon: 'fa-headset', status: 'operational', pinned: true, clicks: 290 },
+            { id: 13, title: 'Customer Success CRM', category: 'Support', url: 'https://crm.internal.corp/accounts', desc: 'Enterprise client portfolios, interaction history, and renewal calendars.', icon: 'fa-address-book', status: 'operational', pinned: false, clicks: 230 },
+            { id: 14, title: 'VoIP Call Reception (Knowlarity)', category: 'Support', url: 'https://voice.internal.corp/pbx', desc: 'Incoming customer call routing, agent status, IVR recordings, and SIP trunks.', icon: 'fa-phone-volume', status: 'operational', pinned: true, clicks: 410 },
+            { id: 15, title: 'Knowledge Base & Wiki', category: 'Support', url: 'https://wiki.internal.corp/docs', desc: 'Standard operating procedures, IT runbooks, and department guidelines.', icon: 'fa-book-bookmark', status: 'operational', pinned: false, clicks: 115 },
+            { id: 16, title: 'API Gateway & Swagger', category: 'Integrations', url: 'https://api.internal.corp/docs', desc: 'RESTful endpoint catalog, OAuth2 keys, rate-limiting rules, and webhooks.', icon: 'fa-code', status: 'operational', pinned: false, clicks: 195 },
+            { id: 17, title: 'CI/CD Pipeline & Deployments', category: 'Integrations', url: 'https://ci.internal.corp/pipelines', desc: 'Jenkins & GitLab build statuses, staging previews, and automated testing suites.', icon: 'fa-gears', status: 'operational', pinned: false, clicks: 155 },
+            { id: 18, title: 'Third-Party Vendor Portal', category: 'Integrations', url: 'https://vendors.internal.corp/portal', desc: 'SaaS partner integrations, API contracts, and active SSL certificate registry.', icon: 'fa-handshake', status: 'operational', pinned: false, clicks: 62 },
+            { id: 19, title: 'Internal VPN Manager', category: 'Tools', url: 'https://vpn.internal.corp/access', desc: 'Remote workforce WireGuard gateways, split-tunneling configs, and cert renewals.', icon: 'fa-lock', status: 'operational', pinned: false, clicks: 140 },
+            { id: 20, title: 'Asset & Inventory Tracking', category: 'Tools', url: 'https://assets.internal.corp/inventory', desc: 'Laptops, monitors, server blades, and software license seat allocation.', icon: 'fa-laptop', status: 'operational', pinned: false, clicks: 88 },
+            { id: 21, title: 'Compliance & Audit Trail', category: 'Tools', url: 'https://compliance.internal.corp/audit', desc: 'ISO 27001 logs, GDPR data request logs, and security pen-test reports.', icon: 'fa-scale-balanced', status: 'operational', pinned: false, clicks: 54 }
+        ];
+
+        let links = JSON.parse(localStorage.getItem('masterPortalLinks')) || initialLinks;
+        let currentCategory = 'All';
+        let searchQuery = '';
+    </script>
+
+    <div class="flex h-full w-full overflow-hidden">
+
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-navy-850 text-slate-300 flex flex-col flex-shrink-0 z-20 shadow-xl border-r border-slate-800">
+            <!-- App Logo / Brand Header -->
+            <div class="h-16 flex items-center px-6 bg-navy-900 border-b border-slate-800/80">
+                <div class="flex items-center space-x-3">
+                    <div class="h-9 w-9 rounded-lg bg-electric-500 flex items-center justify-center text-white font-bold shadow-md shadow-electric-500/30">
+                        <i class="fa-solid fa-layer-group text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-white tracking-wide text-base">L1 Portal</h1>
+                        <span class="text-xs text-slate-400 font-medium">Enterprise Hub v2.4</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <div class="flex-1 overflow-y-auto py-6 px-3 space-y-1.5" id="sidebar-nav">
+                <!-- Populated dynamically via JS -->
+            </div>
+
+            <!-- Sidebar Footer Status -->
+            <div class="p-4 bg-navy-900/60 border-t border-slate-800/80 text-xs text-slate-400 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>All Systems Stable</span>
+                </div>
+                <span class="text-slate-500 font-mono">21 URLs Active</span>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            
+            <!-- Top Header Bar -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-10 shadow-sm">
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-xl mr-6">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" id="global-search" 
+                            placeholder="Search across all 20+ department URLs, tools, or descriptions..." 
+                            class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 transition-all">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-xs text-slate-400 font-mono hidden sm:flex">
+                            ⌘K
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Header Action Controls -->
+                <div class="flex items-center space-x-4">
+                    <button onclick="openAddModal()" class="flex items-center space-x-2 bg-electric-500 hover:bg-electric-600 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm shadow-electric-500/20 transition-all active:scale-95">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        <span>Add Custom URL</span>
+                    </button>
+
+                    <!-- User Profile Indicator -->
+                    <div class="flex items-center space-x-3 pl-3 border-l border-slate-200">
+                        <div class="h-9 w-9 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center font-semibold text-slate-700 text-sm overflow-hidden shadow-inner">
+                            <img src="https://placehold.co/100x100/0066FF/ffffff?text=AD" alt="Admin" class="h-full w-full object-cover">
+                        </div>
+                        <div class="hidden md:block text-left">
+                            <div class="text-xs font-semibold text-slate-800">Admin Dispatch</div>
+                            <div class="text-[11px] text-slate-500">IT Operations</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Stage / Dashboard Content Area -->
+            <main class="flex-1 overflow-y-auto p-8 bg-surface space-y-8" id="main-content-area">
+                <!-- Pinned Quick Access Bar -->
+                <section id="pinned-section" class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-500 flex items-center space-x-2">
+                            <i class="fa-solid fa-star text-amber-400"></i>
+                            <span>Pinned Quick Access</span>
+                        </h2>
+                        <span class="text-xs text-slate-400">Frequently used department shortcuts</span>
+                    </div>
+                    <div id="pinned-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Pinned cards rendered dynamically -->
+                    </div>
+                </section>
+
+                <!-- Category Heading & Filter Stats -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                    <div>
+                        <h2 id="section-title" class="text-2xl font-bold text-slate-900 tracking-tight">All Department Portals</h2>
+                        <p id="section-subtitle" class="text-sm text-slate-500 mt-0.5">Showing all registered internal applications and tools</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-medium bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg" id="result-count-badge">21 URLs Found</span>
+                    </div>
+                </div>
+
+                <!-- Main Grid of URL Cards -->
+                <div id="urls-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards rendered dynamically -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="add-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform duration-300" id="modal-container">
+            <div class="px-6 py-4 bg-navy-850 text-white flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
+                    <div class="h-8 w-8 rounded-lg bg-electric-500 flex items-center justify-center text-white">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                    <h3 class="font-bold text-base">Add New Department URL</h3>
+                </div>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-white p-1 rounded-lg transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form id="add-url-form" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Application Title</label>
+                    <input type="text" id="new-title" required placeholder="e.g. Kubernetes Cluster Manager" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Category</label>
+                        <select id="new-category" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 bg-white focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
+                            <option value="Administration">Administration</option>
+                            <option value="Monitoring">Monitoring</option>
+                            <option value="Analytics">Analytics</option>
+                            <option value="Support">Support</option>
+                            <option value="Integrations">Integrations</option>
+                            <option value="Tools">Tools</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Icon (FontAwesome)</label>
+                        <select id="new-icon" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 bg-white focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
+                            <option value="fa-server">Server (fa-server)</option>
+                            <option value="fa-shield-halved">Shield (fa-shield-halved)</option>
+                            <option value="fa-chart-pie">Analytics (fa-chart-pie)</option>
+                            <option value="fa-headset">Support (fa-headset)</option>
+                            <option value="fa-database">Database (fa-database)</option>
+                            <option value="fa-code">Code/API (fa-code)</option>
+                            <option value="fa-gears">Gears (fa-gears)</option>
+                            <option value="fa-lock">Lock (fa-lock)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Target URL</label>
+                    <input type="url" id="new-url" required placeholder="https://tool.internal.corp/app" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Description</label>
+                    <textarea id="new-desc" rows="2" required placeholder="Brief summary of what this department tool does..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none resize-none"></textarea>
+                </div>
+
+                <div class="pt-4 flex items-center justify-end space-x-3 border-t border-slate-100">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-electric-500 hover:bg-electric-600 text-white rounded-lg text-sm font-semibold shadow-sm shadow-electric-500/20 transition-all">
+                        Save & Register URL
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <div>
+            <div id="toast-title" class="text-sm font-bold">Success</div>
+            <div id="toast-msg" class="text-xs text-slate-300">Action completed successfully.</div>
+        </div>
+    </div>
+
+    <script>
+        // Categories list for sidebar
+        const categories = [
+            { name: 'Dashboard', icon: 'fa-house', count: links.length },
+            { name: 'Administration', icon: 'fa-shield-halved', count: links.filter(l => l.category === 'Administration').length },
+            { name: 'Monitoring', icon: 'fa-heart-pulse', count: links.filter(l => l.category === 'Monitoring').length },
+            { name: 'Analytics', icon: 'fa-chart-pie', count: links.filter(l => l.category === 'Analytics').length },
+            { name: 'Support', icon: 'fa-headset', count: links.filter(l => l.category === 'Support').length },
+            { name: 'Integrations', icon: 'fa-code-branch', count: links.filter(l => l.category === 'Integrations').length },
+            { name: 'Tools', icon: 'fa-toolbox', count: links.filter(l => l.category === 'Tools').length }
+        ];
+
+        // Render Sidebar Navigation
+        function renderSidebar() {
+            const nav = document.getElementById('sidebar-nav');
+            nav.innerHTML = categories.map(cat => {
+                const isActive = currentCategory === cat.name;
+                const count = cat.name === 'Dashboard' ? links.length : links.filter(l => l.category === cat.name).length;
+                return `
+                    <button onclick="selectCategory('${cat.name}')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive ? 'bg-electric-500 text-white shadow-md shadow-electric-500/25 font-semibold' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'}">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid ${cat.icon} w-5 text-center ${isActive ? 'text-white' : 'text-slate-400'}"></i>
+                            <span>${cat.name}</span>
+                        </div>
+                        <span class="text-xs px-2 py-0.5 rounded-md ${isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}">${count}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // Render Pinned Quick Access Row
+        function renderPinned() {
+            const pinnedGrid = document.getElementById('pinned-grid');
+            const pinnedList = links.filter(l => l.pinned);
+            
+            if (pinnedList.length === 0) {
+                document.getElementById('pinned-section').style.display = 'none';
+                return;
+            }
+            document.getElementById('pinned-section').style.display = 'block';
+
+            pinnedGrid.innerHTML = pinnedList.map(item => `
+                <div class="bg-white border border-slate-200/80 rounded-xl p-4 card-hover transition-all duration-200 relative group flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="h-10 w-10 rounded-lg bg-electric-50 text-electric-500 flex items-center justify-center font-bold text-lg group-hover:bg-electric-500 group-hover:text-white transition-colors">
+                                <i class="fa-solid ${item.icon}"></i>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <button onclick="togglePin(${item.id})" class="text-amber-400 hover:text-amber-500 p-1" title="Unpin">
+                                    <i class="fa-solid fa-star text-sm"></i>
+                                </button>
+                                <span class="h-2 w-2 rounded-full ${item.status === 'operational' ? 'bg-emerald-500' : 'bg-amber-500'}" title="Status: ${item.status}"></span>
+                            </div>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm mb-1 truncate">${item.title}</h3>
+                        <p class="text-xs text-slate-500 line-clamp-2 mb-3">${item.desc}</p>
+                    </div>
+                    <div class="flex items-center justify-between pt-3 border-t border-slate-100 mt-2">
+                        <span class="text-[11px] font-medium text-electric-600 bg-electric-50 px-2 py-0.5 rounded">${item.category}</span>
+                        <a href="${item.url}" target="_blank" onclick="incrementClicks(${item.id})" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-electric-500 hover:text-electric-600">
+                            <span>Launch</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render Main Grid based on Search & Category filter
+        function renderMainGrid() {
+            const grid = document.getElementById('urls-grid');
+            let filtered = links;
+
+            if (currentCategory !== 'Dashboard') {
+                filtered = filtered.filter(l => l.category === currentCategory);
+            }
+
+            if (searchQuery.trim() !== '') {
+                const q = searchQuery.toLowerCase();
+                filtered = filtered.filter(l => 
+                    l.title.toLowerCase().includes(q) || 
+                    l.desc.toLowerCase().includes(q) || 
+                    l.category.toLowerCase().includes(q) ||
+                    l.url.toLowerCase().includes(q)
+                );
+            }
+
+            // Update headings & counts
+            document.getElementById('section-title').innerText = currentCategory === 'Dashboard' ? 'All Department Portals' : currentCategory;
+            document.getElementById('section-subtitle').innerText = currentCategory === 'Dashboard' ? 'Browse and launch all 20+ departmental tools & services' : `Filtered by category: ${currentCategory}`;
+            document.getElementById('result-count-badge').innerText = `${filtered.length} URL${filtered.length === 1 ? '' : 's'} Found`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center bg-white rounded-2xl border border-dashed border-slate-300">
+                        <div class="h-12 w-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3 text-xl">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-base">No matching URLs found</h3>
+                        <p class="text-xs text-slate-500 mt-1">Try adjusting your search keyword or selecting another category.</p>
+                        <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors">
+                            Clear Search & Filters
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => `
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 card-hover transition-all duration-200 flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="h-11 w-11 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xl group-hover:bg-electric-500 group-hover:text-white transition-all shadow-sm">
+                                <i class="fa-solid ${item.icon}"></i>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="togglePin(${item.id})" class="text-slate-300 hover:text-amber-400 p-1 transition-colors ${item.pinned ? 'text-amber-400' : ''}" title="${item.pinned ? 'Unpin' : 'Pin to top'}">
+                                    <i class="fa-solid fa-star text-sm"></i>
+                                </button>
+                                <span class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${item.status === 'operational' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : 'bg-amber-50 text-amber-700 border border-amber-200/60'}">
+                                    <span class="h-1.5 w-1.5 rounded-full ${item.status === 'operational' ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
+                                    <span class="capitalize">${item.status}</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <h3 class="font-bold text-slate-900 text-base mb-1 group-hover:text-electric-500 transition-colors">${item.title}</h3>
+                        <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-4">${item.desc}</p>
+                    </div>
+
+                    <div>
+                        <div class="text-[11px] font-mono text-slate-400 truncate mb-3 bg-slate-50 px-2.5 py-1 rounded border border-slate-100">
+                            ${item.url}
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                            <span class="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md">${item.category}</span>
+                            <a href="${item.url}" target="_blank" onclick="incrementClicks(${item.id})" class="inline-flex items-center space-x-1.5 bg-electric-50 hover:bg-electric-500 text-electric-600 hover:text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all">
+                                <span>Open URL</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Event Handlers & Actions
+        function selectCategory(catName) {
+            currentCategory = catName;
+            renderSidebar();
+            renderMainGrid();
+        }
+
+        function resetFilters() {
+            currentCategory = 'Dashboard';
+            searchQuery = '';
+            document.getElementById('global-search').value = '';
+            renderSidebar();
+            renderPinned();
+            renderMainGrid();
+        }
+
+        function togglePin(id) {
+            const item = links.find(l => l.id === id);
+            if (item) {
+                item.pinned = !item.pinned;
+                saveAndRefresh();
+                showToast('Success', item.pinned ? 'Pinned to quick access' : 'Removed from quick access');
+            }
+        }
+
+        function incrementClicks(id) {
+            const item = links.find(l => l.id === id);
+            if (item) {
+                item.clicks = (item.clicks || 0) + 1;
+                localStorage.setItem('masterPortalLinks', JSON.stringify(links));
+            }
+        }
+
+        // Modal Controls
+        function openAddModal() {
+            const modal = document.getElementById('add-modal');
+            const container = document.getElementById('modal-container');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                container.classList.remove('scale-95');
+                container.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeAddModal() {
+            const modal = document.getElementById('add-modal');
+            const container = document.getElementById('modal-container');
+            modal.classList.add('opacity-0');
+            container.classList.remove('scale-100');
+            container.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('add-url-form').reset();
+            }, 300);
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const newLink = {
+                id: Date.now(),
+                title: document.getElementById('new-title').value,
+                category: document.getElementById('new-category').value,
+                icon: document.getElementById('new-icon').value,
+                url: document.getElementById('new-url').value,
+                desc: document.getElementById('new-desc').value,
+                status: 'operational',
+                pinned: false,
+                clicks: 0
+            };
+
+            links.unshift(newLink);
+            saveAndRefresh();
+            closeAddModal();
+            showToast('Portal Registered', 'New custom URL added successfully.');
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('masterPortalLinks', JSON.stringify(links));
+            renderSidebar();
+            renderPinned();
+            renderMainGrid();
+        }
+
+        // Toast notification helper
+        function showToast(title, msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Search listener
+        document.getElementById('global-search').addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderMainGrid();
+        });
+
+        // Initial render on load
+        window.onload = function() {
+            renderSidebar();
+            renderPinned();
+            renderMainGrid();
+        };
+    </script>
+</body>
+</html>
