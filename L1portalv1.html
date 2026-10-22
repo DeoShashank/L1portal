@@ -30,7 +30,6 @@
         }
     </script>
     <style>
-        /* Custom scrollbar for sleek dashboard appearance */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -54,33 +53,41 @@
 <body class="h-full bg-surface text-slate-800 font-sans antialiased overflow-hidden flex flex-col">
 
     <script>
-        // Initial dataset of 22 realistic enterprise/department URLs
+        // Dataset of all 29 URLs from your provided document with accurate categories & tags
         const initialLinks = [
-            { id: 1, title: 'IAM Security Console', category: 'Administration', url: 'https://iam.internal.corp/auth', desc: 'Identity & Access Management, role policies, and SSO tokens.', icon: 'fa-shield-halved', status: 'operational', pinned: true, clicks: 142 },
-            { id: 2, title: 'User Directory & HR', category: 'Administration', url: 'https://hr.internal.corp/directory', desc: 'Employee master records, department hierarchy, and onboarding status.', icon: 'fa-users-gear', status: 'operational', pinned: false, clicks: 89 },
-            { id: 3, title: 'Enterprise LDAP Hub', category: 'Administration', url: 'https://ldap.internal.corp/admin', desc: 'Directory services, security groups, and domain authentication control.', icon: 'fa-server', status: 'operational', pinned: false, clicks: 45 },
-            { id: 4, title: 'Cloud Billing & Invoicing', category: 'Administration', url: 'https://billing.internal.corp/dashboard', desc: 'AWS/Azure cloud expenditure tracking, departmental budget allocations.', icon: 'fa-file-invoice-dollar', status: 'operational', pinned: true, clicks: 210 },
-            { id: 5, title: 'Server Health Matrix', category: 'Monitoring', url: 'https://monitor.internal.corp/matrix', desc: 'Real-time CPU, RAM, and storage telemetry across 450+ nodes.', icon: 'fa-heart-pulse', status: 'operational', pinned: true, clicks: 350 },
-            { id: 6, title: 'Network Traffic Analyzer', category: 'Monitoring', url: 'https://netflow.internal.corp/live', desc: 'Bandwidth consumption, packet loss metrics, and perimeter firewall logs.', icon: 'fa-network-wired', status: 'operational', pinned: false, clicks: 120 },
-            { id: 7, title: 'Error Log Aggregator (ELK)', category: 'Monitoring', url: 'https://logs.internal.corp/app', desc: 'Centralized stack traces, runtime exceptions, and microservice audit logs.', icon: 'fa-bug', status: 'warning', pinned: false, clicks: 285 },
-            { id: 8, title: 'Uptime Status Page', category: 'Monitoring', url: 'https://status.internal.corp/public', desc: 'SLA guarantees, historical availability charts, and incident dispatch.', icon: 'fa-gauge-high', status: 'operational', pinned: false, clicks: 95 },
-            { id: 9, title: 'BI & Executive Dashboard', category: 'Analytics', url: 'https://bi.internal.corp/reports', desc: 'Quarterly KPIs, revenue forecasting models, and conversion funnel metrics.', icon: 'fa-chart-pie', status: 'operational', pinned: true, clicks: 180 },
-            { id: 10, title: 'Database Query Studio', category: 'Analytics', url: 'https://sql.internal.corp/studio', desc: 'Read-only analytics warehouse data lake exploration and OLAP cubes.', icon: 'fa-database', status: 'operational', pinned: false, clicks: 160 },
-            { id: 11, title: 'Product Telemetry Suite', category: 'Analytics', url: 'https://telemetry.internal.corp/metrics', desc: 'User engagement funnels, session duration heatmaps, and retention cohorts.', icon: 'fa-chart-line', status: 'operational', pinned: false, clicks: 78 },
-            { id: 12, title: 'IT Helpdesk & Ticketing', category: 'Support', url: 'https://helpdesk.internal.corp/tickets', desc: 'Internal IT support queue, hardware requests, and priority escalation boards.', icon: 'fa-headset', status: 'operational', pinned: true, clicks: 290 },
-            { id: 13, title: 'Customer Success CRM', category: 'Support', url: 'https://crm.internal.corp/accounts', desc: 'Enterprise client portfolios, interaction history, and renewal calendars.', icon: 'fa-address-book', status: 'operational', pinned: false, clicks: 230 },
-            { id: 14, title: 'VoIP Call Reception (Knowlarity)', category: 'Support', url: 'https://voice.internal.corp/pbx', desc: 'Incoming customer call routing, agent status, IVR recordings, and SIP trunks.', icon: 'fa-phone-volume', status: 'operational', pinned: true, clicks: 410 },
-            { id: 15, title: 'Knowledge Base & Wiki', category: 'Support', url: 'https://wiki.internal.corp/docs', desc: 'Standard operating procedures, IT runbooks, and department guidelines.', icon: 'fa-book-bookmark', status: 'operational', pinned: false, clicks: 115 },
-            { id: 16, title: 'API Gateway & Swagger', category: 'Integrations', url: 'https://api.internal.corp/docs', desc: 'RESTful endpoint catalog, OAuth2 keys, rate-limiting rules, and webhooks.', icon: 'fa-code', status: 'operational', pinned: false, clicks: 195 },
-            { id: 17, title: 'CI/CD Pipeline & Deployments', category: 'Integrations', url: 'https://ci.internal.corp/pipelines', desc: 'Jenkins & GitLab build statuses, staging previews, and automated testing suites.', icon: 'fa-gears', status: 'operational', pinned: false, clicks: 155 },
-            { id: 18, title: 'Third-Party Vendor Portal', category: 'Integrations', url: 'https://vendors.internal.corp/portal', desc: 'SaaS partner integrations, API contracts, and active SSL certificate registry.', icon: 'fa-handshake', status: 'operational', pinned: false, clicks: 62 },
-            { id: 19, title: 'Internal VPN Manager', category: 'Tools', url: 'https://vpn.internal.corp/access', desc: 'Remote workforce WireGuard gateways, split-tunneling configs, and cert renewals.', icon: 'fa-lock', status: 'operational', pinned: false, clicks: 140 },
-            { id: 20, title: 'Asset & Inventory Tracking', category: 'Tools', url: 'https://assets.internal.corp/inventory', desc: 'Laptops, monitors, server blades, and software license seat allocation.', icon: 'fa-laptop', status: 'operational', pinned: false, clicks: 88 },
-            { id: 21, title: 'Compliance & Audit Trail', category: 'Tools', url: 'https://compliance.internal.corp/audit', desc: 'ISO 27001 logs, GDPR data request logs, and security pen-test reports.', icon: 'fa-scale-balanced', status: 'operational', pinned: false, clicks: 54 }
+            { id: 1, title: 'SRVT UPI SMT Monitoring Portal', category: 'Monitoring', tag: 'UPI', url: 'http://10.61.176.10:9090/smt/#!/srvtupi', desc: 'SRVT UPI SMT Monitoring Portal and service telemetry.', icon: 'fa-chart-line', pinned: true, comment: '' },
+            { id: 2, title: 'SRVT IMPS SMT Monitoring Portal', category: 'Monitoring', tag: 'IMPS', url: 'http://10.61.176.10:9090/smt/#!/srvtimps', desc: 'SRVT IMPS SMT Monitoring Portal for active channel tracks.', icon: 'fa-chart-line', pinned: false, comment: '' },
+            { id: 3, title: 'SRVT ATM SMT Monitoring Portal', category: 'Monitoring', tag: 'ATM', url: 'http://10.61.176.10:9090/smt/#!/nfsgw', desc: 'SRVT ATM SMT Monitoring Portal & NFSGW monitoring.', icon: 'fa-server', pinned: false, comment: '' },
+            { id: 4, title: '42cardsesaf', category: 'Enterprise', tag: 'Enterprise', url: 'http://10.249.249.5:49052/smt/#/42cardsesaf', desc: 'Enterprise card monitoring panel for ESAF integration.', icon: 'fa-building', pinned: false, comment: '' },
+            { id: 5, title: '42cardscub', category: 'Enterprise', tag: 'Enterprise', url: 'http://10.249.248.5:49052/smt/#/42cardscub', desc: 'Enterprise card monitoring panel for CUB integration.', icon: 'fa-building', pinned: false, comment: '' },
+            { id: 6, title: 'Jana', category: 'Enterprise', tag: 'Enterprise', url: 'http://10.249.249.5:49052/smt/#!/ianaupi', desc: 'Jana UPI integration monitoring and gateway state.', icon: 'fa-building', pinned: false, comment: '' },
+            { id: 7, title: 'INSDL UPI', category: 'Enterprise', tag: 'Enterprise', url: 'http://10.249.249.5:49052/smt/#!/nsdlual', desc: 'INSDL UPI monitoring panel and transaction traces.', icon: 'fa-building', pinned: false, comment: '' },
+            { id: 8, title: 'NSDL PREAPPROVED', category: 'Enterprise', tag: 'Enterprise', url: 'http://10.249.249.5:49052/smt/#!/nsdlpreapproved', desc: 'NSDL preapproved offers and service checks.', icon: 'fa-building', pinned: false, comment: '' },
+            { id: 9, title: 'Equitas', category: 'Enterprise', tag: 'Enterprise', url: 'http://10.249.249.5:49052/smt/#!/aepsapplication', desc: 'Equitas AEPS application monitoring panel.', icon: 'fa-building', pinned: false, comment: '' },
+            { id: 10, title: 'Utkarsh', category: 'Enterprise', tag: 'Enterprise', url: 'http://10.249.249.5:49052/smt/#!/usmi', desc: 'Utkarsh small finance system integration monitoring.', icon: 'fa-building', pinned: false, comment: '' },
+            { id: 11, title: 'Balancehero', category: 'Enterprise', tag: 'Enterprise', url: 'http://10.249.249.5:49052/smt/#/balanceupi', desc: 'Balancehero UPI transaction routing and status.', icon: 'fa-building', pinned: false, comment: '' },
+            { id: 12, title: 'Pinelabs', category: 'Enterprise', tag: 'Enterprise', url: 'http://10.249.249.5:49052/smt/#!/ppi', desc: 'Pinelabs PPI instrument gateway telemetry.', icon: 'fa-building', pinned: false, comment: '' },
+            { id: 13, title: 'UPI CBSGW (DC)', category: 'Gateway', tag: 'UPI', url: 'https://10.249.249.5:49056/cbsgw/', desc: 'UPI Core Banking Switch Gateway (Datacenter).', icon: 'fa-network-wired', pinned: true, comment: '' },
+            { id: 14, title: 'BBPS', category: 'Monitoring', tag: 'BBPS', url: 'https://10.249.249.5:49057/btips/', desc: 'Bharat Bill Payment System monitoring portal.', icon: 'fa-shield-halved', pinned: false, comment: '' },
+            { id: 15, title: 'BBPS New', category: 'Monitoring', tag: 'BBPS', url: 'https://10.249.249.5:49058/bbps/', desc: 'BBPS New platform transaction tracking console.', icon: 'fa-shield-halved', pinned: false, comment: '' },
+            { id: 16, title: 'Vortex (Perfo)', category: 'Switch', tag: 'Vortex', url: 'https://10.249.249.5:49059/Perfo/#/login', desc: 'Vortex performance monitoring and switch interface.', icon: 'fa-right-left', pinned: false, comment: 'Why is this used?' },
+            { id: 17, title: 'IMPS Switch', category: 'Switch', tag: 'IMPS', url: 'https://10.249.249.5:49060/ipos/', desc: 'IMPS Switch transaction processing interface.', icon: 'fa-right-left', pinned: true, comment: 'Why is this used?' },
+            { id: 18, title: 'IMPS CBSGW (DC)', category: 'Gateway', tag: 'IMPS', url: 'https://10.249.249.5:49061/cbsgw/', desc: 'IMPS Core Banking Switch Gateway (Datacenter).', icon: 'fa-network-wired', pinned: false, comment: '' },
+            { id: 19, title: 'CardSarv Switch', category: 'Switch', tag: 'ATM', url: 'https://10.249.249.5:49062/cs/', desc: 'CardSarv Switch terminal management console.', icon: 'fa-right-left', pinned: false, comment: '' },
+            { id: 20, title: 'CardSarv CBSGW', category: 'Gateway', tag: 'ATM', url: 'https://10.249.249.5:49063/cbsgw/#!/home', desc: 'CardSarv CBS Gateway home dashboard.', icon: 'fa-network-wired', pinned: false, comment: '' },
+            { id: 21, title: 'SMSGW', category: 'SMS', tag: 'SMS', url: 'https://10.249.249.5:49064/SmsGatewayWeb/', desc: 'SMS Gateway Web client for transactional alerts.', icon: 'fa-comment-sms', pinned: false, comment: '' },
+            { id: 22, title: 'UPI Switch', category: 'Switch', tag: 'UPI', url: 'http://10.249.249.5:49065/srvt-upi/#!/login', desc: 'SRVT UPI Switch login portal.', icon: 'fa-right-left', pinned: true, comment: '' },
+            { id: 23, title: 'Accops SMUI', category: 'Pinned', tag: 'SMUI', url: 'https://10.249.249.5:49066/smui/', desc: 'Accops virtual desktop & application access portal.', icon: 'fa-thumbtack', pinned: true, comment: '' },
+            { id: 24, title: 'Olive Production', category: 'Admin', tag: 'ATM', url: 'http://10.249.249.5:49071/login?error', desc: 'Olive Production management console.', icon: 'fa-shield-halved', pinned: false, comment: '' },
+            { id: 25, title: 'BOM Microatm DC', category: 'Admin', tag: 'Micro Atm', url: 'https://10.249.249.5:49072/smw/#terminalltem', desc: 'Bank of Maharashtra Microatm DC terminal view.', icon: 'fa-terminal', pinned: false, comment: 'Microatm' },
+            { id: 26, title: 'CBDC', category: 'Monitoring', tag: 'CBDC', url: 'https://10.158.122.42/vui/d/d68d4708-9861-4418-a214-c', desc: 'Central Bank Digital Currency visualizer.', icon: 'fa-chart-pie', pinned: false, comment: '' },
+            { id: 27, title: 'Bharat Pe', category: 'Monitoring', tag: 'Bharat Pay', url: 'http://168.138.112.81:3125/apm?service=BIG PROD&tin', desc: 'Bharat Pe APM service telemetry console.', icon: 'fa-chart-line', pinned: false, comment: '' },
+            { id: 28, title: 'UPI dashboard', category: 'Admin', tag: 'UPI', url: 'http://172.21.0.125:9091/srvt-admin-portal/#!/system/da', desc: 'SRVT UPI Admin system dashboard.', icon: 'fa-gauge-high', pinned: false, comment: '' },
+            { id: 29, title: 'IMPS dashboard NFSGW-New-LAN', category: 'Admin', tag: 'IMPS/NFS', url: 'https://10.249.249.5:49053/nfsgw/#!/station', desc: 'Sarvatra IMPS and NFSGW station administration.', icon: 'fa-server', pinned: false, comment: '' }
         ];
 
-        let links = JSON.parse(localStorage.getItem('masterPortalLinks')) || initialLinks;
-        let currentCategory = 'All';
+        let links = JSON.parse(localStorage.getItem('l1PortalLinks')) || initialLinks;
+        let currentCategory = 'Dashboard';
         let searchQuery = '';
     </script>
 
@@ -96,7 +103,7 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-white tracking-wide text-base">L1 Portal</h1>
-                        <span class="text-xs text-slate-400 font-medium">Enterprise Hub v2.4</span>
+                        <span class="text-xs text-slate-400 font-medium">v 1.1</span>
                     </div>
                 </div>
             </div>
@@ -104,15 +111,6 @@
             <!-- Navigation Links -->
             <div class="flex-1 overflow-y-auto py-6 px-3 space-y-1.5" id="sidebar-nav">
                 <!-- Populated dynamically via JS -->
-            </div>
-
-            <!-- Sidebar Footer Status -->
-            <div class="p-4 bg-navy-900/60 border-t border-slate-800/80 text-xs text-slate-400 flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>All Systems Stable</span>
-                </div>
-                <span class="text-slate-500 font-mono">21 URLs Active</span>
             </div>
         </aside>
 
@@ -128,7 +126,7 @@
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </span>
                         <input type="text" id="global-search" 
-                            placeholder="Search across all 20+ department URLs, tools, or descriptions..." 
+                            placeholder="Search across all 29 department URLs, tools, or IPs..." 
                             class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 transition-all">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-xs text-slate-400 font-mono hidden sm:flex">
                             ⌘K
@@ -146,11 +144,11 @@
                     <!-- User Profile Indicator -->
                     <div class="flex items-center space-x-3 pl-3 border-l border-slate-200">
                         <div class="h-9 w-9 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center font-semibold text-slate-700 text-sm overflow-hidden shadow-inner">
-                            <img src="https://placehold.co/100x100/0066FF/ffffff?text=AD" alt="Admin" class="h-full w-full object-cover">
+                            <img src="https://placehold.co/100x100/0066FF/ffffff?text=L1" alt="Admin" class="h-full w-full object-cover">
                         </div>
                         <div class="hidden md:block text-left">
-                            <div class="text-xs font-semibold text-slate-800">Admin Dispatch</div>
-                            <div class="text-[11px] text-slate-500">IT Operations</div>
+                            <div class="text-xs font-semibold text-slate-800">L1 Operations</div>
+                            <div class="text-[11px] text-slate-500">Support Desk</div>
                         </div>
                     </div>
                 </div>
@@ -179,7 +177,7 @@
                         <p id="section-subtitle" class="text-sm text-slate-500 mt-0.5">Showing all registered internal applications and tools</p>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <span class="text-xs font-medium bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg" id="result-count-badge">21 URLs Found</span>
+                        <span class="text-xs font-medium bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg" id="result-count-badge">29 URLs Found</span>
                     </div>
                 </div>
 
@@ -191,6 +189,7 @@
         </div>
     </div>
 
+    <!-- Modal to Add Custom URL -->
     <div id="add-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform duration-300" id="modal-container">
             <div class="px-6 py-4 bg-navy-850 text-white flex items-center justify-between">
@@ -208,44 +207,36 @@
             <form id="add-url-form" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Application Title</label>
-                    <input type="text" id="new-title" required placeholder="e.g. Kubernetes Cluster Manager" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
+                    <input type="text" id="new-title" required placeholder="e.g. Custom Node Monitor" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Category</label>
                         <select id="new-category" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 bg-white focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
-                            <option value="Administration">Administration</option>
                             <option value="Monitoring">Monitoring</option>
-                            <option value="Analytics">Analytics</option>
-                            <option value="Support">Support</option>
-                            <option value="Integrations">Integrations</option>
-                            <option value="Tools">Tools</option>
+                            <option value="Enterprise">Enterprise</option>
+                            <option value="Gateway">Gateway</option>
+                            <option value="Switch">Switch</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Pinned">Pinned</option>
+                            <option value="SMS">SMS</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Icon (FontAwesome)</label>
-                        <select id="new-icon" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 bg-white focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
-                            <option value="fa-server">Server (fa-server)</option>
-                            <option value="fa-shield-halved">Shield (fa-shield-halved)</option>
-                            <option value="fa-chart-pie">Analytics (fa-chart-pie)</option>
-                            <option value="fa-headset">Support (fa-headset)</option>
-                            <option value="fa-database">Database (fa-database)</option>
-                            <option value="fa-code">Code/API (fa-code)</option>
-                            <option value="fa-gears">Gears (fa-gears)</option>
-                            <option value="fa-lock">Lock (fa-lock)</option>
-                        </select>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Tag / Sub-label</label>
+                        <input type="text" id="new-tag" placeholder="e.g. UPI / ATM" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Target URL</label>
-                    <input type="url" id="new-url" required placeholder="https://tool.internal.corp/app" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
+                    <input type="text" id="new-url" required placeholder="http://10.x.x.x:port/" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Description</label>
-                    <textarea id="new-desc" rows="2" required placeholder="Brief summary of what this department tool does..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none resize-none"></textarea>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Description / Notes</label>
+                    <textarea id="new-desc" rows="2" required placeholder="Brief summary of what this tool does..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none resize-none"></textarea>
                 </div>
 
                 <div class="pt-4 flex items-center justify-end space-x-3 border-t border-slate-100">
@@ -260,6 +251,7 @@
         </div>
     </div>
 
+    <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
         <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
         <div>
@@ -269,30 +261,33 @@
     </div>
 
     <script>
-        // Categories list for sidebar
-        const categories = [
-            { name: 'Dashboard', icon: 'fa-house', count: links.length },
-            { name: 'Administration', icon: 'fa-shield-halved', count: links.filter(l => l.category === 'Administration').length },
-            { name: 'Monitoring', icon: 'fa-heart-pulse', count: links.filter(l => l.category === 'Monitoring').length },
-            { name: 'Analytics', icon: 'fa-chart-pie', count: links.filter(l => l.category === 'Analytics').length },
-            { name: 'Support', icon: 'fa-headset', count: links.filter(l => l.category === 'Support').length },
-            { name: 'Integrations', icon: 'fa-code-branch', count: links.filter(l => l.category === 'Integrations').length },
-            { name: 'Tools', icon: 'fa-toolbox', count: links.filter(l => l.category === 'Tools').length }
-        ];
+        // Categories list for sidebar computed from actual links count
+        function getCategories() {
+            return [
+                { name: 'Dashboard', icon: 'fa-house', count: links.length },
+                { name: 'Monitoring', icon: 'fa-chart-line', count: links.filter(l => l.category === 'Monitoring').length },
+                { name: 'Enterprise', icon: 'fa-building', count: links.filter(l => l.category === 'Enterprise').length },
+                { name: 'Gateway', icon: 'fa-network-wired', count: links.filter(l => l.category === 'Gateway').length },
+                { name: 'Switch', icon: 'fa-right-left', count: links.filter(l => l.category === 'Switch').length },
+                { name: 'Admin', icon: 'fa-shield-halved', count: links.filter(l => l.category === 'Admin').length },
+                { name: 'Pinned', icon: 'fa-thumbtack', count: links.filter(l => l.category === 'Pinned').length },
+                { name: 'SMS', icon: 'fa-comment-sms', count: links.filter(l => l.category === 'SMS').length }
+            ];
+        }
 
         // Render Sidebar Navigation
         function renderSidebar() {
             const nav = document.getElementById('sidebar-nav');
+            const categories = getCategories();
             nav.innerHTML = categories.map(cat => {
                 const isActive = currentCategory === cat.name;
-                const count = cat.name === 'Dashboard' ? links.length : links.filter(l => l.category === cat.name).length;
                 return `
                     <button onclick="selectCategory('${cat.name}')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive ? 'bg-electric-500 text-white shadow-md shadow-electric-500/25 font-semibold' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'}">
                         <div class="flex items-center space-x-3">
                             <i class="fa-solid ${cat.icon} w-5 text-center ${isActive ? 'text-white' : 'text-slate-400'}"></i>
                             <span>${cat.name}</span>
                         </div>
-                        <span class="text-xs px-2 py-0.5 rounded-md ${isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}">${count}</span>
+                        <span class="text-xs px-2 py-0.5 rounded-md ${isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}">${cat.count}</span>
                     </button>
                 `;
             }).join('');
@@ -313,22 +308,21 @@
                 <div class="bg-white border border-slate-200/80 rounded-xl p-4 card-hover transition-all duration-200 relative group flex flex-col justify-between">
                     <div>
                         <div class="flex items-start justify-between mb-2">
-                            <div class="h-10 w-10 rounded-lg bg-electric-50 text-electric-500 flex items-center justify-center font-bold text-lg group-hover:bg-electric-500 group-hover:text-white transition-colors">
-                                <i class="fa-solid ${item.icon}"></i>
+                            <div class="h-9 w-9 rounded-lg bg-electric-50 text-electric-500 flex items-center justify-center font-bold text-sm group-hover:bg-electric-500 group-hover:text-white transition-colors">
+                                <i class="fa-solid ${item.icon || 'fa-link'}"></i>
                             </div>
                             <div class="flex items-center space-x-1">
                                 <button onclick="togglePin(${item.id})" class="text-amber-400 hover:text-amber-500 p-1" title="Unpin">
                                     <i class="fa-solid fa-star text-sm"></i>
                                 </button>
-                                <span class="h-2 w-2 rounded-full ${item.status === 'operational' ? 'bg-emerald-500' : 'bg-amber-500'}" title="Status: ${item.status}"></span>
                             </div>
                         </div>
                         <h3 class="font-bold text-slate-800 text-sm mb-1 truncate">${item.title}</h3>
-                        <p class="text-xs text-slate-500 line-clamp-2 mb-3">${item.desc}</p>
+                        <p class="text-xs text-slate-500 line-clamp-2 mb-2">${item.desc}</p>
                     </div>
                     <div class="flex items-center justify-between pt-3 border-t border-slate-100 mt-2">
-                        <span class="text-[11px] font-medium text-electric-600 bg-electric-50 px-2 py-0.5 rounded">${item.category}</span>
-                        <a href="${item.url}" target="_blank" onclick="incrementClicks(${item.id})" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-electric-500 hover:text-electric-600">
+                        <span class="text-[10px] font-semibold text-electric-600 bg-electric-50 px-2 py-0.5 rounded">${item.tag || item.category}</span>
+                        <a href="${item.url}" target="_blank" class="inline-flex items-center space-x-1 text-xs font-semibold text-electric-500 hover:text-electric-600">
                             <span>Launch</span>
                             <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
                         </a>
@@ -352,13 +346,13 @@
                     l.title.toLowerCase().includes(q) || 
                     l.desc.toLowerCase().includes(q) || 
                     l.category.toLowerCase().includes(q) ||
+                    l.tag.toLowerCase().includes(q) ||
                     l.url.toLowerCase().includes(q)
                 );
             }
 
-            // Update headings & counts
-            document.getElementById('section-title').innerText = currentCategory === 'Dashboard' ? 'All Department Portals' : currentCategory;
-            document.getElementById('section-subtitle').innerText = currentCategory === 'Dashboard' ? 'Browse and launch all 20+ departmental tools & services' : `Filtered by category: ${currentCategory}`;
+            document.getElementById('section-title').innerText = currentCategory === 'Dashboard' ? 'All Department Portals' : currentCategory + ' Portals';
+            document.getElementById('section-subtitle').innerText = currentCategory === 'Dashboard' ? 'Browse and launch all 29 departmental operational links' : `Showing links categorized under ${currentCategory}`;
             document.getElementById('result-count-badge').innerText = `${filtered.length} URL${filtered.length === 1 ? '' : 's'} Found`;
 
             if (filtered.length === 0) {
@@ -381,41 +375,43 @@
                 <div class="bg-white border border-slate-200/80 rounded-2xl p-5 card-hover transition-all duration-200 flex flex-col justify-between group">
                     <div>
                         <div class="flex items-start justify-between mb-3">
-                            <div class="h-11 w-11 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xl group-hover:bg-electric-500 group-hover:text-white transition-all shadow-sm">
-                                <i class="fa-solid ${item.icon}"></i>
+                            <div class="h-10 w-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-lg group-hover:bg-electric-500 group-hover:text-white transition-all shadow-sm">
+                                <i class="fa-solid ${item.icon || 'fa-link'}"></i>
                             </div>
                             <div class="flex items-center space-x-2">
+                                <span class="text-[10px] font-bold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600">${item.tag || item.category}</span>
                                 <button onclick="togglePin(${item.id})" class="text-slate-300 hover:text-amber-400 p-1 transition-colors ${item.pinned ? 'text-amber-400' : ''}" title="${item.pinned ? 'Unpin' : 'Pin to top'}">
                                     <i class="fa-solid fa-star text-sm"></i>
                                 </button>
-                                <span class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${item.status === 'operational' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : 'bg-amber-50 text-amber-700 border border-amber-200/60'}">
-                                    <span class="h-1.5 w-1.5 rounded-full ${item.status === 'operational' ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
-                                    <span class="capitalize">${item.status}</span>
-                                </span>
                             </div>
                         </div>
 
                         <h3 class="font-bold text-slate-900 text-base mb-1 group-hover:text-electric-500 transition-colors">${item.title}</h3>
-                        <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-4">${item.desc}</p>
+                        <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-3">${item.desc}</p>
+                        ${item.comment ? `<div class="text-[11px] text-amber-700 bg-amber-50 px-2.5 py-1 rounded border border-amber-200 mb-3"><i class="fa-solid fa-circle-info mr-1"></i>${item.comment}</div>` : ''}
                     </div>
 
                     <div>
-                        <div class="text-[11px] font-mono text-slate-400 truncate mb-3 bg-slate-50 px-2.5 py-1 rounded border border-slate-100">
+                        <div class="text-[11px] font-mono text-slate-400 truncate mb-3 bg-slate-50 px-2.5 py-1 rounded border border-slate-100 select-all" title="${item.url}">
                             ${item.url}
                         </div>
                         <div class="flex items-center justify-between pt-3 border-t border-slate-100">
                             <span class="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md">${item.category}</span>
-                            <a href="${item.url}" target="_blank" onclick="incrementClicks(${item.id})" class="inline-flex items-center space-x-1.5 bg-electric-50 hover:bg-electric-500 text-electric-600 hover:text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all">
-                                <span>Open URL</span>
-                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                            </a>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="copyToClipboard('${item.url}')" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs transition-colors" title="Copy URL">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
+                                <a href="${item.url}" target="_blank" class="inline-flex items-center space-x-1.5 bg-electric-50 hover:bg-electric-500 text-electric-600 hover:text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all">
+                                    <span>Open</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Event Handlers & Actions
         function selectCategory(catName) {
             currentCategory = catName;
             renderSidebar();
@@ -440,15 +436,16 @@
             }
         }
 
-        function incrementClicks(id) {
-            const item = links.find(l => l.id === id);
-            if (item) {
-                item.clicks = (item.clicks || 0) + 1;
-                localStorage.setItem('masterPortalLinks', JSON.stringify(links));
-            }
+        function copyToClipboard(url) {
+            const textarea = document.createElement('textarea');
+            textarea.value = url;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('Copied', 'URL copied to clipboard.');
         }
 
-        // Modal Controls
         function openAddModal() {
             const modal = document.getElementById('add-modal');
             const container = document.getElementById('modal-container');
@@ -478,12 +475,12 @@
                 id: Date.now(),
                 title: document.getElementById('new-title').value,
                 category: document.getElementById('new-category').value,
-                icon: document.getElementById('new-icon').value,
+                tag: document.getElementById('new-tag').value || 'Custom',
                 url: document.getElementById('new-url').value,
                 desc: document.getElementById('new-desc').value,
-                status: 'operational',
+                icon: 'fa-link',
                 pinned: false,
-                clicks: 0
+                comment: 'Custom added link'
             };
 
             links.unshift(newLink);
@@ -493,13 +490,12 @@
         }
 
         function saveAndRefresh() {
-            localStorage.setItem('masterPortalLinks', JSON.stringify(links));
+            localStorage.setItem('l1PortalLinks', JSON.stringify(links));
             renderSidebar();
             renderPinned();
             renderMainGrid();
         }
 
-        // Toast notification helper
         function showToast(title, msg) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-title').innerText = title;
@@ -510,13 +506,11 @@
             }, 3000);
         }
 
-        // Search listener
         document.getElementById('global-search').addEventListener('input', (e) => {
             searchQuery = e.target.value;
             renderMainGrid();
         });
 
-        // Initial render on load
         window.onload = function() {
             renderSidebar();
             renderPinned();
