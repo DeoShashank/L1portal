@@ -4,32 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>L1 Portal | Department Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS loaded safely via standard stylesheet link to prevent render blocking or import failures -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        navy: {
-                            850: '#0B192C',
-                            900: '#07101B',
-                        },
-                        electric: {
-                            500: '#0066FF',
-                            600: '#0052CC',
-                        },
-                        surface: '#F8FAFC'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
     <style>
+        :root {
+            --navy-850: #0B192C;
+            --navy-900: #07101B;
+            --electric-500: #0066FF;
+            --electric-600: #0052CC;
+            --surface: #F8FAFC;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--surface);
+            color: #1e293b;
+        }
+        .bg-navy-850 { background-color: var(--navy-850); }
+        .bg-navy-900 { background-color: var(--navy-900); }
+        .bg-electric-500 { background-color: var(--electric-500); }
+        .bg-electric-600 { background-color: var(--electric-600); }
+        .text-electric-500 { color: var(--electric-500); }
+        .text-electric-600 { color: var(--electric-600); }
+        .border-electric-500 { border-color: var(--electric-500); }
+        
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -50,96 +49,62 @@
         }
     </style>
 </head>
-<body class="h-full bg-surface text-slate-800 font-sans antialiased overflow-hidden flex flex-col">
+<body class="h-full antialiased overflow-hidden flex flex-col">
 
     <script>
-        let links = [];
-        let currentMode = localStorage.getItem('l1PortalMode') || 'DC'; // 'DC' or 'DR'
+        // Complete dataset of all 37 operational links with DC and DR mapping
+        let links = [
+            { id: 1, title: 'SRVT UPI SMT Monitoring Portal', category: 'Monitoring', tag: 'UPI', dcUrl: 'http://10.61.176.10:9090/smt/#!/srvtupi', drUrl: '', desc: 'SRVT UPI SMT Monitoring Portal and service telemetry.', icon: 'fa-chart-line', pinned: true },
+            { id: 2, title: 'SRVT IMPS SMT Monitoring Portal', category: 'Monitoring', tag: 'IMPS', dcUrl: 'http://10.61.176.10:9090/smt/#!/srvtimps', drUrl: '', desc: 'SRVT IMPS SMT Monitoring Portal for active channel tracks.', icon: 'fa-chart-line', pinned: false },
+            { id: 3, title: 'SRVT ATM SMT Monitoring Portal', category: 'Monitoring', tag: 'ATM', dcUrl: 'http://10.61.176.10:9090/smt/#!/nfsgw', drUrl: '', desc: 'SRVT ATM SMT Monitoring Portal & NFSGW monitoring.', icon: 'fa-server', pinned: false },
+            { id: 4, title: 'UPI CBSGW', category: 'Gateway', tag: 'UPI', dcUrl: 'https://10.61.159.13:8443/cbsgw/', drUrl: 'https://10.158.58.25:8443/cbsgw/#!/station', desc: 'UPI Core Banking Switch Gateway with independent DC/DR mapping.', icon: 'fa-network-wired', pinned: true },
+            { id: 5, title: 'BBPS', category: 'Monitoring', tag: 'BBPS', dcUrl: 'https://10.61.158.2:8443/bbps/', drUrl: '', desc: 'Bharat Bill Payment System monitoring portal.', icon: 'fa-shield-halved', pinned: false },
+            { id: 6, title: 'BBPS New', category: 'Monitoring', tag: 'BBPS', dcUrl: 'https://10.61.158.2:4443/bbps/', drUrl: '', desc: 'BBPS New platform transaction tracking console.', icon: 'fa-shield-halved', pinned: false },
+            { id: 7, title: 'Vortex (Perfo)', category: 'Switch', tag: 'Vortex', dcUrl: 'https://10.61.156.156:8443/Perfo/#/login', drUrl: '', desc: 'Vortex performance monitoring and switch interface.', icon: 'fa-right-left', pinned: false },
+            { id: 8, title: 'IMPS Switch', category: 'Switch', tag: 'IMPS', dcUrl: 'https://10.61.158.1:8443/jpos/', drUrl: 'https://10.158.58.10:8443/jpos/', desc: 'IMPS Switch transaction processing interface.', icon: 'fa-right-left', pinned: true },
+            { id: 9, title: 'IMPS CBSGW', category: 'Gateway', tag: 'IMPS', dcUrl: 'https://10.61.158.7:8443/cbsgw/', drUrl: 'https://10.158.58.5:8443/cbsgw/#!/station', desc: 'IMPS Core Banking Switch Gateway.', icon: 'fa-network-wired', pinned: false },
+            { id: 10, title: 'CardSarv Switch', category: 'Switch', tag: 'ATM', dcUrl: 'https://172.27.143.10:8443/cs/', drUrl: 'https://10.158.57.161:8443/cs/#!/home', desc: 'CardSarv Switch terminal management console.', icon: 'fa-right-left', pinned: false },
+            { id: 11, title: 'CardSarv CBSGW', category: 'Gateway', tag: 'ATM', dcUrl: 'https://10.61.176.6:8443/cbsgw/#!/home', drUrl: 'https://10.158.57.142:8443/cbsgw/#!/station', desc: 'CardSarv CBS Gateway home dashboard.', icon: 'fa-network-wired', pinned: false },
+            { id: 12, title: 'SMSGW', category: 'SMS', tag: 'SMS', dcUrl: 'https://172.21.0.125:6604/SmsGatewayWeb/', drUrl: 'https://10.158.172.125:6604/SmsGatewayWeb', desc: 'SMS Gateway Web client for transactional alerts.', icon: 'fa-comment-sms', pinned: false },
+            { id: 13, title: 'UPI Switch', category: 'Switch', tag: 'UPI', dcUrl: 'http://172.21.0.125:9091/srvt-upi/#!/login', drUrl: 'http://10.158.172.125:9091/srvt-upi/#!/login', desc: 'SRVT UPI Switch login portal with dedicated DR mapping.', icon: 'fa-right-left', pinned: true },
+            { id: 14, title: 'Accops SMUI', category: 'Pinned', tag: 'SMUI', dcUrl: 'https://172.21.0.12:10443/smui/', drUrl: 'https://10.158.172.12:10443/smui/', desc: 'Accops virtual desktop & application access portal.', icon: 'fa-thumbtack', pinned: true },
+            { id: 15, title: 'Vunet Monitoring', category: 'Monitoring', tag: 'Vünet', dcUrl: 'https://172.21.122.33/vui/a/vusmartmaps-app?redirect=dashboard', drUrl: 'https://10.158.122.21/realms/vunet', desc: 'Vünet smart maps and application monitoring console.', icon: 'fa-chart-line', pinned: false },
+            { id: 16, title: 'Airtel-DLT', category: 'SMS', tag: 'DLT', dcUrl: 'https://www.airtel.in/business/commercial-communication/home', drUrl: '', desc: 'Airtel DLT commercial communication portal.', icon: 'fa-comment-sms', pinned: false },
+            { id: 17, title: 'Vodafone DLT', category: 'SMS', tag: 'DLT', dcUrl: 'https://www.vilpower.in/login', drUrl: '', desc: 'Vodafone Idea (VI) DLT portal for messaging compliance.', icon: 'fa-comment-sms', pinned: false },
+            { id: 18, title: 'Keka Portal', category: 'Other', tag: 'HR', dcUrl: 'https://app.keka.com/Account/KekaLogin', drUrl: '', desc: 'Keka HR and attendance management portal.', icon: 'fa-user-tie', pinned: false },
+            { id: 19, title: 'Outlook Mail', category: 'Other', tag: 'Mail', dcUrl: 'https://login.microsoftonline.com/', drUrl: '', desc: 'Microsoft Outlook corporate web mail portal.', icon: 'fa-envelope', pinned: false },
+            { id: 20, title: 'Wolken', category: 'Other', tag: 'Service Desk', dcUrl: 'https://sarvatra.wolkenservicedesk.com/wolken/esd/dynamic_filter', drUrl: '', desc: 'Wolken Enterprise Service Desk ticket management.', icon: 'fa-headset', pinned: false },
+            { id: 21, title: '42cardsesaf', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#/42cardsesaf', drUrl: '', desc: 'Enterprise SMT monitoring endpoint for Esaf.', icon: 'fa-building', pinned: false },
+            { id: 22, title: '42cardscub', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.248.5:49052/smt/#/42cardscub', drUrl: '', desc: 'Enterprise SMT monitoring endpoint for CUB.', icon: 'fa-building', pinned: false },
+            { id: 23, title: 'Jana', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#!/ianaupi', drUrl: '', desc: 'Enterprise SMT monitoring for Jana UPI.', icon: 'fa-building', pinned: false },
+            { id: 24, title: 'INSDL UPI', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#!/nsdlual', drUrl: '', desc: 'Enterprise NSDL UPI SMT monitoring portal.', icon: 'fa-building', pinned: false },
+            { id: 25, title: 'NSDL Preapproved', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#!/nsdlpreapproved', drUrl: '', desc: 'NSDL preapproved credit/loan monitoring endpoint.', icon: 'fa-building', pinned: false },
+            { id: 26, title: 'Equitas', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#!/aepsapplication', drUrl: '', desc: 'Equitas AEPS application monitoring console.', icon: 'fa-building', pinned: false },
+            { id: 27, title: 'Utkarsh', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.248.5:49052/smt/#!/usmf', drUrl: '', desc: 'Utkarsh microfinance SMT interface.', icon: 'fa-building', pinned: false },
+            { id: 28, title: 'Balancehero', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#/balanceupi', drUrl: '', desc: 'Balancehero UPI monitoring tool.', icon: 'fa-building', pinned: false },
+            { id: 29, title: 'Pinelabs', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#!/ppi', drUrl: '', desc: 'Pinelabs PPI transaction monitoring portal.', icon: 'fa-building', pinned: false },
+            { id: 30, title: 'Olive Production', category: 'Admin', tag: 'ATM', dcUrl: 'http://10.61.156.21:8081/login?error', drUrl: 'http://10.61.159.221:7000/haproxy_stats', desc: 'Olive Production login and gateway statistics.', icon: 'fa-shield-halved', pinned: false },
+            { id: 31, title: 'BOM Microatm DC', category: 'Admin', tag: 'Micro ATM', dcUrl: 'https://10.249.249.5:49072/smw/#terminalltem', drUrl: '', desc: 'Bank of Maharashtra Microatm terminal management.', icon: 'fa-shield-halved', pinned: false },
+            { id: 32, title: 'CBDC', category: 'Monitoring', tag: 'CBDC', dcUrl: 'https://10.158.122.42/vui/d/d68d4708-9861-4418-a214-c', drUrl: '', desc: 'CBDC smart maps and logs dashboard.', icon: 'fa-chart-line', pinned: false },
+            { id: 33, title: 'Bharat Pe', category: 'Monitoring', tag: 'Bharat Pay', dcUrl: 'http://168.138.112.81:3125/apm?service=BIG PROD&tin', drUrl: '', desc: 'Bharat Pay APM transaction monitoring node.', icon: 'fa-chart-line', pinned: false },
+            { id: 34, title: 'UPI Dashboard', category: 'Admin', tag: 'UPI', dcUrl: 'http://172.21.0.125:9091/srvt-admin-portal/#!/system/da', drUrl: '', desc: 'SRVT UPI system administration dashboard.', icon: 'fa-shield-halved', pinned: false },
+            { id: 35, title: 'NFSGW-New-LAN (IMPS/NFS)', category: 'Admin', tag: 'NFS', dcUrl: 'https://10.249.249.5:49053/nfsgw/#!/station', drUrl: '', desc: 'Sarvatra IMPS and NFS gateway station terminal.', icon: 'fa-shield-halved', pinned: false },
+            { id: 36, title: 'Voltds', category: 'Switch', tag: 'VoltDS', dcUrl: 'http://10.61.156.1:8080/uvoltds/login.seam?cid=32', drUrl: '', desc: 'VoltDS transaction routing switch console.', icon: 'fa-right-left', pinned: false },
+            { id: 37, title: 'COBALT Prod', category: 'Enterprise', tag: 'Cobalt', dcUrl: 'http://10.61.74.11:9090/dashborad', drUrl: '', desc: 'COBALT production dashboard endpoint.', icon: 'fa-building', pinned: false }
+        ];
+
         let currentCategory = 'Dashboard';
         let searchQuery = '';
-
-        // Fetch portal links from external JSON data source
-        async function loadPortalData() {
-            try {
-                const response = await fetch('portal-data.json');
-                if (!response.ok) throw new Error('Failed to load configuration');
-                const data = await response.json();
-                
-                // Map links based on current DC/DR mode selection
-                links = data.map(item => ({
-                    ...item,
-                    url: (currentMode === 'DR' && item.drUrl) ? item.drUrl : item.dcUrl
-                }));
-
-                renderSidebar();
-                renderPinned();
-                renderMainGrid();
-            } catch (error) {
-                console.warn('Falling back to embedded JSON data payload:', error);
-                // Fallback embedded dataset if fetched standalone without server
-                loadFallbackData();
-            }
-        }
-
-        function loadFallbackData() {
-            const rawData = [
-                { id: 1, title: 'SRVT UPI SMT Monitoring Portal', category: 'Monitoring', tag: 'UPI', dcUrl: 'http://10.61.176.10:9090/smt/#!/srvtupi', drUrl: 'http://10.61.176.20:9090/smt/#!/srvtupi', icon: 'fa-chart-line', pinned: true },
-                { id: 2, title: 'SRVT IMPS SMT Monitoring Portal', category: 'Monitoring', tag: 'IMPS', dcUrl: 'http://10.61.176.10:9090/smt/#!/srvtimps', drUrl: 'http://10.61.176.20:9090/smt/#!/srvtimps', icon: 'fa-chart-line', pinned: false },
-                { id: 3, title: 'SRVT ATM SMT Monitoring Portal', category: 'Monitoring', tag: 'ATM', dcUrl: 'http://10.61.176.10:9090/smt/#!/nfsgw', drUrl: 'http://10.61.176.20:9090/smt/#!/nfsgw', icon: 'fa-server', pinned: false },
-                { id: 4, title: '42cardsesaf', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#1/42cardsesat', drUrl: 'http://10.249.250.5:49052/smt/#1/42cardsesat', icon: 'fa-building', pinned: false },
-                { id: 5, title: '42cardscub', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.248.5:49052/smt/#1/42cardscub', drUrl: 'http://10.249.250.5:49052/smt/#1/42cardscub', icon: 'fa-building', pinned: false },
-                { id: 6, title: 'Jana', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#!/ianaupi', drUrl: 'http://10.249.250.5:49052/smt/#!/ianaupi', icon: 'fa-building', pinned: false },
-                { id: 7, title: 'INSDL UPI', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#!/nsdlual', drUrl: 'http://10.249.250.5:49052/smt/#!/nsdlual', icon: 'fa-building', pinned: false },
-                { id: 8, title: 'NSDL PREAPPROVED', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#!/nsdlpreapproved', drUrl: 'http://10.249.250.5:49052/smt/#!/nsdlpreapproved', icon: 'fa-building', pinned: false },
-                { id: 9, title: 'Equitas', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#!/aepsapplication', drUrl: 'http://10.249.250.5:49052/smt/#!/aepsapplication', icon: 'fa-building', pinned: false },
-                { id: 10, title: 'Utkarsh', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.248.5:49052/smt/#!/usmf', drUrl: 'http://10.249.250.5:49052/smt/#!/usmf', icon: 'fa-building', pinned: false },
-                { id: 11, title: 'Balancehero', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#1/balanceupi', drUrl: 'http://10.249.250.5:49052/smt/#1/balanceupi', icon: 'fa-building', pinned: false },
-                { id: 12, title: 'Pinelabs', category: 'Enterprise', tag: 'Enterprise', dcUrl: 'http://10.249.249.5:49052/smt/#!/ppi', drUrl: 'http://10.249.250.5:49052/smt/#!/ppi', icon: 'fa-building', pinned: false },
-                { id: 13, title: 'UPI CBSGW (DC)', category: 'Gateway', tag: 'UPI', dcUrl: 'https://10.249.249.5:49056/cbsew/', drUrl: 'https://10.249.250.5:49056/cbsew/', icon: 'fa-network-wired', pinned: true },
-                { id: 14, title: 'BBPS', category: 'Monitoring', tag: 'BBPS', dcUrl: 'https://10.249.249.5:49057/btips/', drUrl: 'https://10.249.250.5:49057/btips/', icon: 'fa-shield-halved', pinned: false },
-                { id: 15, title: 'BBPS New', category: 'Monitoring', tag: 'BBPS', dcUrl: 'https://10.249.249.5:49058/bbps/', drUrl: 'https://10.249.250.5:49058/bbps/', icon: 'fa-shield-halved', pinned: false },
-                { id: 16, title: 'Vortex (Perfo)', category: 'Switch', tag: 'Vortex', dcUrl: 'https://10.249.249.5:49059/Perfo/#/login', drUrl: 'https://10.249.250.5:49059/Perfo/#/login', icon: 'fa-right-left', pinned: false },
-                { id: 17, title: 'IMPS Switch', category: 'Switch', tag: 'IMPS', dcUrl: 'https://10.249.249.5:49060/ipos/', drUrl: 'https://10.249.250.5:49060/ipos/', icon: 'fa-right-left', pinned: true },
-                { id: 18, title: 'IMPS CBSGW (DC)', category: 'Gateway', tag: 'IMPS', dcUrl: 'https://10.249.249.5:49061/cbsew/', drUrl: 'https://10.249.250.5:49061/cbsew/', icon: 'fa-network-wired', pinned: false },
-                { id: 19, title: 'CardSarv Switch', category: 'Switch', tag: 'ATM', dcUrl: 'https://10.249.249.5:49062/cs/', drUrl: 'https://10.249.250.5:49062/cs/', icon: 'fa-right-left', pinned: false },
-                { id: 20, title: 'CardSarv CBSGW', category: 'Gateway', tag: 'ATM', dcUrl: 'https://10.249.249.5:49063/cbsew/#!/home', drUrl: 'https://10.249.250.5:49063/cbsew/#!/home', icon: 'fa-network-wired', pinned: false },
-                { id: 21, title: 'SMSGW', category: 'SMS', tag: 'SMS', dcUrl: 'https://10.249.249.5:49064/SmsGatewayWeb/', drUrl: 'https://10.249.250.5:49064/SmsGatewayWeb/', icon: 'fa-comment-sms', pinned: false },
-                { id: 22, title: 'UPI Switch', category: 'Switch', tag: 'UPI', dcUrl: 'http://10.249.249.5:49065/srvt-upi/#!/login', drUrl: 'http://10.249.250.5:49065/srvt-upi/#!/login', icon: 'fa-right-left', pinned: true },
-                { id: 23, title: 'Accops SMUI', category: 'Pinned', tag: 'SMUI', dcUrl: 'https://10.249.249.5:49066/smui/', drUrl: 'https://10.249.250.5:49066/smui/', icon: 'fa-thumbtack', pinned: true },
-                { id: 24, title: 'Olive Production', category: 'Admin', tag: 'ATM', dcUrl: 'http://10.249.249.5:49071/login?error', drUrl: 'http://10.249.250.5:49071/login?error', icon: 'fa-shield-halved', pinned: false },
-                { id: 25, title: 'BOM Microatm DC', category: 'Admin', tag: 'Micro Atm', dcUrl: 'https://10.249.249.5:49072/smw/#terminalltem', drUrl: 'https://10.249.250.5:49072/smw/#terminalltem', icon: 'fa-terminal', pinned: false },
-                { id: 26, title: 'CBDC', category: 'Monitoring', tag: 'CBDC', dcUrl: 'https://10.158.122.42/vui/d/d68d4708-9861-4418-a214-c', drUrl: 'https://10.158.122.43/vui/d/d68d4708-9861-4418-a214-c', icon: 'fa-chart-pie', pinned: false },
-                { id: 27, title: 'Bharat Pe', category: 'Monitoring', tag: 'Bharat Pay', dcUrl: 'http://168.138.112.81:3125/apm?service=BIG PROD&tin', drUrl: 'http://168.138.112.82:3125/apm?service=BIG PROD&tin', icon: 'fa-chart-line', pinned: false },
-                { id: 28, title: 'UPI dashboard', category: 'Admin', tag: 'UPI', dcUrl: 'http://172.21.0.125:9091/srvt-admin-portal/#!/system/da', drUrl: 'http://172.21.0.126:9091/srvt-admin-portal/#!/system/da', icon: 'fa-gauge-high', pinned: false },
-                { id: 29, title: 'IMPS dashboard NFSGW-New-LAN', category: 'Admin', tag: 'IMPS/NFS', dcUrl: 'https://10.249.249.5:49053/nfsgw/#!/station', drUrl: 'https://10.249.250.5:49053/nfsgw/#!/station', icon: 'fa-server', pinned: false },
-                { id: 30, title: 'Vunet Monitoring', category: 'Monitoring', tag: 'Vünet', dcUrl: 'https://172.21.122.33/vi/a/vusmartmaps-app?redirect=', drUrl: 'https://172.21.122.34/vi/a/vusmartmaps-app?redirect=', icon: 'fa-chart-line', pinned: false },
-                { id: 31, title: 'Airtel-DLT', category: 'SMS', tag: 'DLT', dcUrl: 'https://www.airtel.in/business/commercial-communication/home', drUrl: 'https://www.airtel.in/business/commercial-communication/home', icon: 'fa-comment-sms', pinned: false },
-                { id: 32, title: 'Vodafone DLT', category: 'SMS', tag: 'DLT', dcUrl: 'https://www.vilpower.in/login', drUrl: 'https://www.vilpower.in/login', icon: 'fa-comment-sms', pinned: false },
-                { id: 33, title: 'Keka Portal', category: 'Other', tag: 'HR', dcUrl: 'https://app.keka.com/Account/KekaLogin', drUrl: 'https://app.keka.com/Account/KekaLogin', icon: 'fa-user-tie', pinned: false },
-                { id: 34, title: 'Outlook Mail', category: 'Other', tag: 'Mail', dcUrl: 'https://login.microsoftonline.com/', drUrl: 'https://login.microsoftonline.com/', icon: 'fa-envelope', pinned: false },
-                { id: 35, title: 'Wolken', category: 'Other', tag: 'Service Desk', dcUrl: 'https://sarvatra.wolkenservicedesk.com/wolken/esd/dyn', drUrl: 'https://sarvatra.wolkenservicedesk.com/wolken/esd/dyn', icon: 'fa-headset', pinned: false }
-            ];
-
-            links = rawData.map(item => ({
-                ...item,
-                url: (currentMode === 'DR' && item.drUrl) ? item.drUrl : item.dcUrl
-            }));
-
-            renderSidebar();
-            renderPinned();
-            renderMainGrid();
-            updateModeUI();
-        }
+        let linkModes = JSON.parse(localStorage.getItem('l1LinkModes') || '{}');
     </script>
 
     <div class="flex h-full w-full overflow-hidden">
 
         <!-- Sidebar Navigation -->
         <aside class="w-64 bg-navy-850 text-slate-300 flex flex-col flex-shrink-0 z-20 shadow-xl border-r border-slate-800">
-            <!-- App Logo / Brand Header -->
             <div class="h-16 flex items-center px-6 bg-navy-900 border-b border-slate-800/80">
                 <div class="flex items-center space-x-3">
-                    <div class="h-9 w-9 rounded-lg bg-electric-500 flex items-center justify-center text-white font-bold shadow-md shadow-electric-500/30">
+                    <div class="h-9 w-9 rounded-lg bg-electric-500 flex items-center justify-center text-white font-bold shadow-md">
                         <i class="fa-solid fa-layer-group text-lg"></i>
                     </div>
                     <div>
@@ -149,44 +114,27 @@
                 </div>
             </div>
 
-            <!-- Navigation Links -->
-            <div class="flex-1 overflow-y-auto py-6 px-3 space-y-1.5" id="sidebar-nav">
-                <!-- Populated dynamically via JS -->
-            </div>
+            <div class="flex-1 overflow-y-auto py-6 px-3 space-y-1.5" id="sidebar-nav"></div>
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
             
             <!-- Top Header Bar -->
             <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-10 shadow-sm">
-                <!-- Search Bar -->
                 <div class="flex-1 max-w-lg mr-4">
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </span>
                         <input type="text" id="global-search" 
-                            placeholder="Search across all department URLs, tools, or IPs..." 
-                            class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 transition-all">
+                            placeholder="Search across all 37 department URLs, tools, or IPs..." 
+                            class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
                     </div>
                 </div>
 
-                <!-- Right Header Action Controls -->
                 <div class="flex items-center space-x-4">
-                    <!-- DC / DR Environment Toggle Switch -->
-                    <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
-                        <button onclick="switchMode('DC')" id="dc-btn" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5">
-                            <i class="fa-solid fa-server text-[10px]"></i>
-                            <span>DC Mode</span>
-                        </button>
-                        <button onclick="switchMode('DR')" id="dr-btn" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5">
-                            <i class="fa-solid fa-cloud-arrow-up text-[10px]"></i>
-                            <span>DR Mode</span>
-                        </button>
-                    </div>
-
-                    <button onclick="openAddModal()" class="flex items-center space-x-2 bg-electric-500 hover:bg-electric-600 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm shadow-electric-500/20 transition-all active:scale-95">
+                    <button onclick="openAddModal()" class="flex items-center space-x-2 bg-electric-500 hover:bg-electric-600 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition-all active:scale-95">
                         <i class="fa-solid fa-plus text-xs"></i>
                         <span>Add Custom URL</span>
                     </button>
@@ -194,44 +142,35 @@
             </header>
 
             <!-- Main Stage / Dashboard Content Area -->
-            <div class="flex-1 overflow-y-auto p-8 bg-surface space-y-8" id="main-content-area">
-                <!-- Pinned Quick Access Bar -->
+            <div class="flex-1 overflow-y-auto p-8 space-y-8" id="main-content-area">
                 <section id="pinned-section" class="space-y-3">
                     <div class="flex items-center justify-between">
                         <h2 class="text-sm font-bold uppercase tracking-wider text-slate-500 flex items-center space-x-2">
                             <i class="fa-solid fa-star text-amber-400"></i>
                             <span>Pinned Quick Access</span>
                         </h2>
-                        <span class="text-xs text-slate-400" id="mode-badge-label">Active Environment: DC (Datacenter)</span>
+                        <span class="text-xs text-slate-400">Independent DC/DR Switching enabled per service</span>
                     </div>
-                    <div id="pinned-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <!-- Pinned cards rendered dynamically -->
-                    </div>
+                    <div id="pinned-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
                 </section>
 
-                <!-- Category Heading & Filter Stats with Open All Button -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
                     <div>
                         <h2 id="section-title" class="text-2xl font-bold text-slate-900 tracking-tight">All Department Portals</h2>
                         <p id="section-subtitle" class="text-sm text-slate-500 mt-0.5">Showing all registered internal applications and tools</p>
                     </div>
                     <div class="flex items-center space-x-3">
-                        <div id="open-all-container">
-                            <!-- Dynamically rendered Open All Category Button -->
-                        </div>
-                        <span class="text-xs font-medium bg-slate-200 text-slate-700 px-3 py-2 rounded-lg" id="result-count-badge">35 URLs Found</span>
+                        <div id="open-all-container"></div>
+                        <span class="text-xs font-medium bg-slate-200 text-slate-700 px-3 py-2 rounded-lg" id="result-count-badge">0 URLs Found</span>
                     </div>
                 </div>
 
-                <!-- Main Grid of URL Cards -->
-                <div id="urls-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Cards rendered dynamically -->
-                </div>
+                <div id="urls-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </div>
         </main>
     </div>
 
-    <!-- Modal to Add Custom URL -->
+    <!-- Add Custom URL Modal -->
     <div id="add-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform duration-300" id="modal-container">
             <div class="px-6 py-4 bg-navy-850 text-white flex items-center justify-between">
@@ -249,13 +188,13 @@
             <form id="add-url-form" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Application Title</label>
-                    <input type="text" id="new-title" required placeholder="e.g. Custom Node Monitor" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
+                    <input type="text" id="new-title" required placeholder="e.g. Custom Node Monitor" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Category</label>
-                        <select id="new-category" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 bg-white focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
+                        <select id="new-category" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none">
                             <option value="Monitoring">Monitoring</option>
                             <option value="Enterprise">Enterprise</option>
                             <option value="Gateway">Gateway</option>
@@ -268,31 +207,26 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Tag / Sub-label</label>
-                        <input type="text" id="new-tag" placeholder="e.g. UPI / ATM" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
+                        <input type="text" id="new-tag" placeholder="e.g. UPI / ATM" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">DC Target URL</label>
-                        <input type="text" id="new-dc-url" required placeholder="http://dc-ip:port/" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
+                        <input type="text" id="new-dc-url" required placeholder="http://dc-ip:port/" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">DR Target URL</label>
-                        <input type="text" id="new-dr-url" required placeholder="http://dr-ip:port/" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">DR Target URL (Optional)</label>
+                        <input type="text" id="new-dr-url" placeholder="http://dr-ip:port/" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none">
                     </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Description / Notes</label>
-                    <textarea id="new-desc" rows="2" required placeholder="Brief summary of what this tool does..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-electric-500/20 focus:border-electric-500 outline-none resize-none"></textarea>
                 </div>
 
                 <div class="pt-4 flex items-center justify-end space-x-3 border-t border-slate-100">
                     <button type="button" onclick="closeAddModal()" class="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
                         Cancel
                     </button>
-                    <button type="submit" class="px-5 py-2 bg-electric-500 hover:bg-electric-600 text-white rounded-lg text-sm font-semibold shadow-sm shadow-electric-500/20 transition-all">
+                    <button type="submit" class="px-5 py-2 bg-electric-500 hover:bg-electric-600 text-white rounded-lg text-sm font-semibold shadow-sm transition-all">
                         Save & Register URL
                     </button>
                 </div>
@@ -310,38 +244,17 @@
     </div>
 
     <script>
-        function switchMode(mode) {
-            currentMode = mode;
-            localStorage.setItem('l1PortalMode', mode);
+        function toggleLinkMode(id) {
+            const current = linkModes[id] || 'dc';
+            linkModes[id] = current === 'dc' ? 'dr' : 'dc';
+            localStorage.setItem('l1LinkModes', JSON.stringify(linkModes));
             
-            // Re-map links based on selected mode
-            links = links.map(item => ({
-                ...item,
-                url: (mode === 'DR' && item.drUrl) ? item.drUrl : item.dcUrl
-            }));
-
-            updateModeUI();
+            const item = links.find(l => l.id === id);
+            if (item) {
+                showToast('Environment Toggled', `${item.title} switched to ${linkModes[id].toUpperCase()} mode`);
+            }
             renderPinned();
             renderMainGrid();
-            showToast('Environment Switched', `Active operational mode set to ${mode} (${mode === 'DR' ? 'Disaster Recovery' : 'Datacenter'})`);
-        }
-
-        function updateModeUI() {
-            const dcBtn = document.getElementById('dc-btn');
-            const drBtn = document.getElementById('dr-btn');
-            const modeLabel = document.getElementById('mode-badge-label');
-
-            if (!dcBtn || !drBtn) return;
-
-            if (currentMode === 'DC') {
-                dcBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 bg-electric-500 text-white shadow-sm";
-                drBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 text-slate-600 hover:text-slate-900";
-                if (modeLabel) modeLabel.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span> Active Environment: <strong>DC (Datacenter)</strong>`;
-            } else {
-                drBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 bg-amber-500 text-white shadow-sm";
-                dcBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 text-slate-600 hover:text-slate-900";
-                if (modeLabel) modeLabel.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-amber-500 mr-1.5 animate-pulse"></span> Active Environment: <strong>DR (Disaster Recovery)</strong>`;
-            }
         }
 
         function getCategories() {
@@ -367,7 +280,7 @@
                 return `
                     <div class="space-y-1">
                         <div class="flex items-center space-x-1">
-                            <button onclick="selectCategory('${cat.name}')" class="flex-1 flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive ? 'bg-electric-500 text-white shadow-md shadow-electric-500/25 font-semibold' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'}">
+                            <button onclick="selectCategory('${cat.name}')" class="flex-1 flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive ? 'bg-electric-500 text-white shadow-md font-semibold' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'}">
                                 <div class="flex items-center space-x-3">
                                     <i class="fa-solid ${cat.icon} w-5 text-center ${isActive ? 'text-white' : 'text-slate-400'}"></i>
                                     <span>${cat.name}</span>
@@ -385,15 +298,17 @@
             if (matchingLinks.length === 0) return;
 
             if (matchingLinks.length > 5) {
-                if (!confirm(`This will open ${matchingLinks.length} tabs for the '${categoryName}' category in ${currentMode} mode. Do you want to proceed?`)) {
+                if (!confirm(`This will open ${matchingLinks.length} tabs for the '${categoryName}' category. Do you want to proceed?`)) {
                     return;
                 }
             }
 
             matchingLinks.forEach(item => {
-                window.open(item.url, '_blank');
+                const mode = linkModes[item.id] || 'dc';
+                const activeUrl = (mode === 'dr' && item.drUrl) ? item.drUrl : item.dcUrl;
+                if (activeUrl) window.open(activeUrl, '_blank');
             });
-            showToast('Batch Open', `Opened ${matchingLinks.length} URLs for ${categoryName} (${currentMode})`);
+            showToast('Batch Open', `Opened ${matchingLinks.length} URLs for ${categoryName}`);
         }
 
         function renderPinned() {
@@ -409,32 +324,44 @@
             }
             pinnedSection.style.display = 'block';
 
-            pinnedGrid.innerHTML = pinnedList.map(item => `
-                <div class="bg-white border border-slate-200/80 rounded-xl p-4 card-hover transition-all duration-200 relative group flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-start justify-between mb-2">
-                            <div class="h-9 w-9 rounded-lg bg-electric-50 text-electric-500 flex items-center justify-center font-bold text-sm group-hover:bg-electric-500 group-hover:text-white transition-colors">
-                                <i class="fa-solid ${item.icon || 'fa-link'}"></i>
+            pinnedGrid.innerHTML = pinnedList.map(item => {
+                const hasDr = item.drUrl && item.drUrl.trim() !== '';
+                const mode = linkModes[item.id] || 'dc';
+                const activeUrl = (mode === 'dr' && hasDr) ? item.drUrl : item.dcUrl;
+
+                return `
+                    <div class="bg-white border border-slate-200/80 rounded-xl p-4 card-hover transition-all duration-200 relative group flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="h-9 w-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm group-hover:bg-electric-500 group-hover:text-white transition-colors">
+                                    <i class="fa-solid ${item.icon || 'fa-link'}"></i>
+                                </div>
+                                <div class="flex items-center space-x-1.5">
+                                    ${hasDr ? `
+                                        <button onclick="toggleLinkMode(${item.id})" class="px-2 py-0.5 rounded text-[10px] font-bold transition-all ${mode === 'dr' ? 'bg-amber-500 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}" title="Toggle DC/DR">
+                                            ${mode.toUpperCase()}
+                                        </button>
+                                    ` : `
+                                        <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-400">DC ONLY</span>
+                                    `}
+                                    <button onclick="togglePin(${item.id})" class="text-amber-400 hover:text-amber-500 p-1" title="Unpin">
+                                        <i class="fa-solid fa-star text-sm"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="flex items-center space-x-1">
-                                <span class="text-[9px] font-mono px-1.5 py-0.5 rounded ${currentMode === 'DR' ? 'bg-amber-50 text-amber-600 font-bold' : 'bg-slate-100 text-slate-500'}">${currentMode}</span>
-                                <button onclick="togglePin(${item.id})" class="text-amber-400 hover:text-amber-500 p-1" title="Unpin">
-                                    <i class="fa-solid fa-star text-sm"></i>
-                                </button>
-                            </div>
+                            <h3 class="font-bold text-slate-800 text-sm mb-1 truncate">${item.title}</h3>
+                            <p class="text-xs text-slate-500 line-clamp-2 mb-2">${item.desc || 'Operational gateway URL.'}</p>
                         </div>
-                        <h3 class="font-bold text-slate-800 text-sm mb-1 truncate">${item.title}</h3>
-                        <p class="text-xs text-slate-500 line-clamp-2 mb-2">${item.desc || 'Operational gateway URL.'}</p>
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-100 mt-2">
+                            <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${item.tag || item.category}</span>
+                            <a href="${activeUrl}" target="_blank" class="inline-flex items-center space-x-1 text-xs font-semibold text-electric-500 hover:text-electric-600">
+                                <span>Launch</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
                     </div>
-                    <div class="flex items-center justify-between pt-3 border-t border-slate-100 mt-2">
-                        <span class="text-[10px] font-semibold text-electric-600 bg-electric-50 px-2 py-0.5 rounded">${item.tag || item.category}</span>
-                        <a href="${item.url}" target="_blank" class="inline-flex items-center space-x-1 text-xs font-semibold text-electric-500 hover:text-electric-600">
-                            <span>Launch</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                        </a>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function renderMainGrid() {
@@ -454,7 +381,8 @@
                     (l.desc && l.desc.toLowerCase().includes(q)) || 
                     l.category.toLowerCase().includes(q) ||
                     l.tag.toLowerCase().includes(q) ||
-                    l.url.toLowerCase().includes(q)
+                    l.dcUrl.toLowerCase().includes(q) ||
+                    (l.drUrl && l.drUrl.toLowerCase().includes(q))
                 );
             }
 
@@ -463,7 +391,7 @@
             const resultBadge = document.getElementById('result-count-badge');
 
             if (sectionTitle) sectionTitle.innerText = currentCategory === 'Dashboard' ? 'All Department Portals' : currentCategory + ' Portals';
-            if (sectionSubtitle) sectionSubtitle.innerText = currentCategory === 'Dashboard' ? `Browse and launch all departmental operational links (${currentMode} Mode active)` : `Showing links categorized under ${currentCategory} in ${currentMode} mode`;
+            if (sectionSubtitle) sectionSubtitle.innerText = currentCategory === 'Dashboard' ? 'Browse and launch all departmental operational links with individual DC/DR toggles' : `Showing links categorized under ${currentCategory}`;
             if (resultBadge) resultBadge.innerText = `${filtered.length} URL${filtered.length === 1 ? '' : 's'} Found`;
 
             const openAllContainer = document.getElementById('open-all-container');
@@ -488,53 +416,62 @@
                         </div>
                         <h3 class="font-bold text-slate-800 text-base">No matching URLs found</h3>
                         <p class="text-xs text-slate-500 mt-1">Try adjusting your search keyword or selecting another category.</p>
-                        <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors">
-                            Clear Search & Filters
-                        </button>
                     </div>
                 `;
                 return;
             }
 
-            grid.innerHTML = filtered.map(item => `
-                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 card-hover transition-all duration-200 flex flex-col justify-between group">
-                    <div>
-                        <div class="flex items-start justify-between mb-3">
-                            <div class="h-10 w-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-lg group-hover:bg-electric-500 group-hover:text-white transition-all shadow-sm">
-                                <i class="fa-solid ${item.icon || 'fa-link'}"></i>
+            grid.innerHTML = filtered.map(item => {
+                const hasDr = item.drUrl && item.drUrl.trim() !== '';
+                const mode = linkModes[item.id] || 'dc';
+                const activeUrl = (mode === 'dr' && hasDr) ? item.drUrl : item.dcUrl;
+
+                return `
+                    <div class="bg-white border border-slate-200/80 rounded-2xl p-5 card-hover transition-all duration-200 flex flex-col justify-between group">
+                        <div>
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="h-10 w-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-lg group-hover:bg-electric-500 group-hover:text-white transition-all shadow-sm">
+                                    <i class="fa-solid ${item.icon || 'fa-link'}"></i>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">${item.tag || item.category}</span>
+                                    ${hasDr ? `
+                                        <button onclick="toggleLinkMode(${item.id})" class="px-2.5 py-1 rounded text-[10px] font-bold transition-all shadow-sm ${mode === 'dr' ? 'bg-amber-500 text-white' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'}" title="Toggle between DC and DR endpoint">
+                                            <i class="fa-solid fa-server mr-1"></i>${mode.toUpperCase()}
+                                        </button>
+                                    ` : `
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-400">DC ONLY</span>
+                                    `}
+                                    <button onclick="togglePin(${item.id})" class="text-slate-300 hover:text-amber-400 p-1 transition-colors ${item.pinned ? 'text-amber-400' : ''}" title="${item.pinned ? 'Unpin' : 'Pin to top'}">
+                                        <i class="fa-solid fa-star text-sm"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">${item.tag || item.category}</span>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded ${currentMode === 'DR' ? 'bg-amber-100 text-amber-700' : 'bg-blue-50 text-blue-700'}">${currentMode}</span>
-                                <button onclick="togglePin(${item.id})" class="text-slate-300 hover:text-amber-400 p-1 transition-colors ${item.pinned ? 'text-amber-400' : ''}" title="${item.pinned ? 'Unpin' : 'Pin to top'}">
-                                    <i class="fa-solid fa-star text-sm"></i>
-                                </button>
-                            </div>
+
+                            <h3 class="font-bold text-slate-900 text-base mb-1 group-hover:text-electric-500 transition-colors">${item.title}</h3>
+                            <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-3">${item.desc || 'Internal operational system endpoint.'}</p>
                         </div>
 
-                        <h3 class="font-bold text-slate-900 text-base mb-1 group-hover:text-electric-500 transition-colors">${item.title}</h3>
-                        <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-3">${item.desc || 'Internal operational system endpoint.'}</p>
-                    </div>
-
-                    <div>
-                        <div class="text-[11px] font-mono text-slate-400 truncate mb-3 bg-slate-50 px-2.5 py-1 rounded border border-slate-100 select-all" title="${item.url}">
-                            ${item.url}
-                        </div>
-                        <div class="flex items-center justify-between pt-3 border-t border-slate-100">
-                            <span class="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md">${item.category}</span>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="copyToClipboard('${item.url}')" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs transition-colors" title="Copy URL">
-                                    <i class="fa-solid fa-copy"></i>
-                                </button>
-                                <a href="${item.url}" target="_blank" class="inline-flex items-center space-x-1.5 bg-electric-50 hover:bg-electric-500 text-electric-600 hover:text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all">
-                                    <span>Open</span>
-                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                                </a>
+                        <div>
+                            <div class="text-[11px] font-mono text-slate-400 truncate mb-3 bg-slate-50 px-2.5 py-1 rounded border border-slate-100 select-all" title="${activeUrl}">
+                                <strong class="text-slate-500">${mode.toUpperCase()}:</strong> ${activeUrl}
+                            </div>
+                            <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                                <span class="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md">${item.category}</span>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="copyToClipboard('${activeUrl}')" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs transition-colors" title="Copy URL">
+                                        <i class="fa-solid fa-copy"></i>
+                                    </button>
+                                    <a href="${activeUrl}" target="_blank" class="inline-flex items-center space-x-1.5 bg-blue-50 hover:bg-electric-500 text-blue-600 hover:text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all">
+                                        <span>Open</span>
+                                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function selectCategory(catName) {
@@ -543,21 +480,13 @@
             renderMainGrid();
         }
 
-        function resetFilters() {
-            currentCategory = 'Dashboard';
-            searchQuery = '';
-            const searchInput = document.getElementById('global-search');
-            if (searchInput) searchInput.value = '';
-            renderSidebar();
-            renderPinned();
-            renderMainGrid();
-        }
-
         function togglePin(id) {
             const item = links.find(l => l.id === id);
             if (item) {
                 item.pinned = !item.pinned;
-                saveAndRefresh();
+                renderSidebar();
+                renderPinned();
+                renderMainGrid();
                 showToast('Success', item.pinned ? 'Pinned to quick access' : 'Removed from quick access');
             }
         }
@@ -609,23 +538,18 @@
                 category: document.getElementById('new-category').value,
                 tag: document.getElementById('new-tag').value || 'Custom',
                 dcUrl: dcUrlVal,
-                drUrl: drUrlVal,
-                url: currentMode === 'DR' ? drUrlVal : dcUrlVal,
-                desc: document.getElementById('new-desc').value,
+                drUrl: drUrlVal || '',
+                desc: 'User-registered operational gateway.',
                 icon: 'fa-link',
                 pinned: false
             };
 
             links.unshift(newLink);
-            saveAndRefresh();
-            closeAddModal();
-            showToast('Portal Registered', 'New custom DC/DR URLs added successfully.');
-        }
-
-        function saveAndRefresh() {
             renderSidebar();
             renderPinned();
             renderMainGrid();
+            closeAddModal();
+            showToast('Portal Registered', 'New custom URL added successfully.');
         }
 
         function showToast(title, msg) {
@@ -639,17 +563,17 @@
             }, 3000);
         }
 
-        const globalSearch = document.getElementById('global-search');
-        if (globalSearch) {
-            globalSearch.addEventListener('input', (e) => {
-                searchQuery = e.target.value;
-                renderMainGrid();
-            });
-        }
-
         window.onload = function() {
-            updateModeUI();
-            loadPortalData();
+            const globalSearch = document.getElementById('global-search');
+            if (globalSearch) {
+                globalSearch.addEventListener('input', (e) => {
+                    searchQuery = e.target.value;
+                    renderMainGrid();
+                });
+            }
+            renderSidebar();
+            renderPinned();
+            renderMainGrid();
         };
     </script>
 </body>
